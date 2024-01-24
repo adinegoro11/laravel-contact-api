@@ -6,6 +6,8 @@ use App\Http\Requests\UserRegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 
 // use Illuminate\Http\Request;
@@ -31,7 +33,7 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function register(UserRegisterRequest $request): UserResource
+    public function register(UserRegisterRequest $request): JsonResponse
     {
         $data = $request->validated();
         if (User::where('username', $data['username'])->count() == 1) {
@@ -45,9 +47,9 @@ class UserController extends Controller
         }
 
         $user = new User($data);
-        $user->passwod = Hash::make($data['password']);
+        $user->password = Hash::make($data['password']);
         $user->save();
-        return new UserResource($user);
+        return (new UserResource($user))->response()->setStatusCode(201);
     }
 
     /**

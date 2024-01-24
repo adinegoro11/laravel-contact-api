@@ -1,0 +1,102 @@
+{
+    "openapi":"3.0.3",
+    "info":{
+        "title": "User API",
+        "description": "User API",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:80"
+        }
+    ],
+    "paths": {
+        "/api/users":{
+            "post":{
+                "description": "Register new user",
+                "requestBody":{
+                    "content": {
+                        "application/json":{
+                            "example":{
+                                "Lionel": {
+                                    "description":"Register user Lionel",
+                                    "value": {
+                                        "username":"Lionel",
+                                        "password":"lionel123",
+                                        "email":"lionel@messi.com"
+                                    }
+                                }
+                            },
+                            "schema":{
+                                "type":"object",
+                                "required": [
+                                    "name","password","email"
+                                ],
+                                "properties":{
+                                    "username": {
+                                        "type":"string"
+                                    },
+                                    "password": {
+                                        "type":"string"
+                                    },
+                                    "email": {
+                                        "type":"string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201" :{
+                        "description": "Success register user",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties": {
+                                        "data":{
+                                            "type": "object",
+                                            "properties": {
+                                                "id":{
+                                                    "type": "number"
+                                                },
+                                                "username":{
+                                                    "type": "string"
+                                                },
+                                                "email":{
+                                                    "type": "string"
+                                                }
+                                            }
+                                        },
+                                        "errors":{
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/login":{
+            "post":{
+                "description": "login user"
+            }
+        },
+        "/api/users/current":{
+            "get":{
+                "description": "Get current user"
+            },
+            "patch":{
+                "description": "Update current user"
+            }
+        },
+        "/api/users/logout":{
+            "delete":{
+                "description": "Logout current user"
+            }
+        }
+    }
+}

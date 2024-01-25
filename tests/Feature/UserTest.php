@@ -115,4 +115,20 @@ class UserTest extends TestCase
             ]
         ]);
     }
+
+    public function test_current_user_success(): void
+    {
+        $this->seed([UserSeeder::class]);
+        $response = $this->get('/api/users/current', [
+            'Authorization' => 'test-token',
+        ]);
+        $response->assertStatus(200);
+        // $response->assertJson([
+        //     'errors' => [
+        //         'message' => [
+        //             'Invalid username password'
+        //         ],
+        //     ]
+        // ]);
+    }
 }

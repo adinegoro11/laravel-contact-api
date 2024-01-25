@@ -18,6 +18,7 @@ class UserSeeder extends Seeder
             'username' => 'test',
             'password' => Hash::make('test'),
             'email' => 'test@test.com',
+            'token' => 'test-token',
         ]);
     }
 }

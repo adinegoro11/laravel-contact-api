@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 
 // use Illuminate\Http\Request;
@@ -25,9 +27,24 @@ class UserController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function login(UserLoginRequest $request): UserResource
     {
-        //
+        $data = $request->validated();
+
+        $user = User::where('username', $data['username'])->first();
+        if (!$user || !Hash::check($data['password'], $user->password)) {
+            throw new HttpResponseException(response([
+                'errors' => [
+                    'message' => [
+                        'Invalid username password'
+                    ]
+                ]
+            ], 401));
+        }
+
+        $user->token = Str::uuid()->toString();
+        $user->save();
+        return new UserResource($user);
     }
 
     /**

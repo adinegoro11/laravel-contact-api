@@ -123,12 +123,41 @@ class UserTest extends TestCase
             'Authorization' => 'test-token',
         ]);
         $response->assertStatus(200);
-        // $response->assertJson([
-        //     'errors' => [
-        //         'message' => [
-        //             'Invalid username password'
-        //         ],
-        //     ]
-        // ]);
+        $response->assertJson([
+            'data' => [
+                'username' => 'test',
+                'email' => 'test@test.com',
+            ],
+        ]);
+    }
+
+    public function test_current_user_unauthorized(): void
+    {
+        $this->seed([UserSeeder::class]);
+        $response = $this->get('/api/users/current');
+        $response->assertStatus(401);
+        $response->assertJson([
+            'errors' => [
+                'message' =>  [
+                    'unauthorized'
+                ]
+            ],
+        ]);
+    }
+
+    public function test_current_invalid_token(): void
+    {
+        $this->seed([UserSeeder::class]);
+        $response = $this->get('/api/users/current', [
+            'Authorization' => 'invalid-token',
+        ]);
+        $response->assertStatus(401);
+        $response->assertJson([
+            'errors' => [
+                'message' =>  [
+                    'unauthorized'
+                ]
+            ],
+        ]);
     }
 }

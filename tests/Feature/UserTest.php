@@ -221,7 +221,6 @@ class UserTest extends TestCase
             'Accept' => 'application/json'
         ])->delete('/api/users/logout', []);
         $response->assertStatus(401);
-        $response->dump();
         $response->assertJson([
             'errors' => [
                 'message' => [

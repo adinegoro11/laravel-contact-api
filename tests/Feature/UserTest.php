@@ -176,4 +176,22 @@ class UserTest extends TestCase
             'username' => $new_username,
         ]);
     }
+
+    public function test_failed_update_name(): void
+    {
+        $this->seed([UserSeeder::class]);
+        $new_username = 'da';
+        $response = $this->withHeaders([
+            'Authorization' => 'test-token',
+            'Accept' => 'application/json'
+        ])->patch('/api/users/current', ['username' => $new_username]);
+        $response->assertStatus(400);
+        $response->assertJson([
+            'errors' => [
+                'username' => [
+                    'The username field must be at least 3 characters.'
+                ],
+            ]
+        ]);
+    }
 }

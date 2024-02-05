@@ -101,10 +101,15 @@ class UserController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Logout user.
      */
-    public function destroy(string $id)
+    public function logout(Request $request): JsonResponse
     {
-        //
+        $user = Auth::user();
+        $user->token = null;
+        $user->save();
+        return response()->json([
+            'data' => true
+        ])->setStatusCode(200);
     }
 }

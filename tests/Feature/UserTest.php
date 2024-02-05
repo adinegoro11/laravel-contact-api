@@ -194,4 +194,40 @@ class UserTest extends TestCase
             ]
         ]);
     }
+
+    public function test_success_logout(): void
+    {
+        $this->seed([UserSeeder::class]);
+        $response = $this->withHeaders([
+            'Authorization' => 'test-token',
+            'Accept' => 'application/json'
+        ])->delete('/api/users/logout', []);
+        $response->assertStatus(200);
+        $response->assertJson([
+            'data' => true,
+        ]);
+
+        $this->assertDatabaseHas('users', [
+            'username' => 'test',
+            'token' => null,
+        ]);
+    }
+
+    public function test_failed_logout(): void
+    {
+        $this->seed([UserSeeder::class]);
+        $response = $this->withHeaders([
+            'Authorization' => 'invalid-token',
+            'Accept' => 'application/json'
+        ])->delete('/api/users/logout', []);
+        $response->assertStatus(401);
+        $response->dump();
+        $response->assertJson([
+            'errors' => [
+                'message' => [
+                    'unauthorized'
+                ],
+            ]
+        ]);
+    }
 }

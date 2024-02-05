@@ -160,4 +160,20 @@ class UserTest extends TestCase
             ],
         ]);
     }
+
+    public function test_success_update_name(): void
+    {
+        $this->seed([UserSeeder::class]);
+        $new_username = 'Ricardo';
+        $response = $this->withHeaders([
+            'Authorization' => 'test-token',
+            'Accept' => 'application/json'
+        ])->patch('/api/users/current', ['username' => $new_username]);
+        $response->assertStatus(200);
+        $response->assertJsonPath('data.username', fn (string $check) => ($check) == $new_username);
+        $this->assertDatabaseCount('users', 1);
+        $this->assertDatabaseHas('users', [
+            'username' => $new_username,
+        ]);
+    }
 }

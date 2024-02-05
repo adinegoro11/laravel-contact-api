@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegisterRequest;
+use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -81,19 +82,22 @@ class UserController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UserUpdateRequest $request): UserResource
     {
-        //
+        $data = $request->validated();
+        $user = Auth::user();
+
+        if (isset($data['username'])) {
+            $user->username = $data['username'];
+        }
+        if (isset($data['password'])) {
+            $user->password = $data['password'];
+        }
+
+        $user->save();
+        return new UserResource($user);
     }
 
     /**

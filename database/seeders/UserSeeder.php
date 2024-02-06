@@ -20,5 +20,12 @@ class UserSeeder extends Seeder
             'email' => 'test@test.com',
             'token' => 'test-token',
         ]);
+
+        User::create([
+            'username' => 'second_user',
+            'password' => Hash::make('test'),
+            'email' => 'second@user.com',
+            'token' => 'second-token',
+        ]);
     }
 }

@@ -137,4 +137,64 @@ class ContactTest extends TestCase
         $response->assertJsonPath('data.last_name', fn (string $check) => ($check) == 'Vardy');
         $response->assertJsonPath('data.phone', fn (string $check) => ($check) == '222222');
     }
+
+    public function test_update_with_empty_firstname(): void
+    {
+        $this->seed([UserSeeder::class, ContactSeeder::class]);
+        $contact = Contact::query()->limit(1)->first();
+
+        $response = $this->withHeaders([
+            'Authorization' => 'test-token',
+            'Accept' => 'application/json'
+        ])->put('/api/contacts/' . $contact->id, [
+            'first_name' => '',
+            'last_name' => 'Vardy',
+            'phone' => '222222',
+        ]);
+
+        $response->assertStatus(400);
+        $response->assertJson([
+            'errors' => [
+                'first_name' => [
+                    'The first name field is required.'
+                ]
+            ]
+        ]);
+    }
+
+    public function test_delete_success(): void
+    {
+        $this->seed([UserSeeder::class, ContactSeeder::class]);
+        $contact = Contact::query()->limit(1)->first();
+
+        $response = $this->withHeaders([
+            'Authorization' => 'test-token',
+            'Accept' => 'application/json'
+        ])->delete('/api/contacts/' . $contact->id, []);
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'data' => 'success'
+        ]);
+    }
+
+    public function test_delete_not_found(): void
+    {
+        $this->seed([UserSeeder::class, ContactSeeder::class]);
+        $contact = Contact::query()->limit(1)->first();
+
+        $response = $this->withHeaders([
+            'Authorization' => 'test-token',
+            'Accept' => 'application/json'
+        ])->delete('/api/contacts/' . ($contact->id + 2), []);
+
+        $response->assertStatus(404);
+        $response->assertJson([
+            'errors' => [
+                'message' => [
+                    'not found'
+                ]
+            ]
+        ]);
+    }
 }

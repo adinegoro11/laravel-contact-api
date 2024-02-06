@@ -117,4 +117,24 @@ class ContactTest extends TestCase
             ]
         ]);
     }
+
+    public function test_update_success(): void
+    {
+        $this->seed([UserSeeder::class, ContactSeeder::class]);
+        $contact = Contact::query()->limit(1)->first();
+
+        $response = $this->withHeaders([
+            'Authorization' => 'test-token',
+            'Accept' => 'application/json'
+        ])->put('/api/contacts/' . $contact->id, [
+            'first_name' => 'Jamie',
+            'last_name' => 'Vardy',
+            'phone' => '222222',
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJsonPath('data.first_name', fn (string $check) => ($check) == 'Jamie');
+        $response->assertJsonPath('data.last_name', fn (string $check) => ($check) == 'Vardy');
+        $response->assertJsonPath('data.phone', fn (string $check) => ($check) == '222222');
+    }
 }

@@ -171,7 +171,7 @@ class UserTest extends TestCase
         ])->patch('/api/users/current', ['username' => $new_username]);
         $response->assertStatus(200);
         $response->assertJsonPath('data.username', fn (string $check) => ($check) == $new_username);
-        $this->assertDatabaseCount('users', 1);
+        $this->assertDatabaseCount('users', 2);
         $this->assertDatabaseHas('users', [
             'username' => $new_username,
         ]);

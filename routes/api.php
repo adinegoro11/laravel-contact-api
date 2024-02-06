@@ -29,4 +29,5 @@ Route::middleware('authorization')->group(function (){
     Route::delete('/users/logout',[UserController::class, 'logout']);
     Route::post('/contacts',[ContactController::class, 'create']);
     Route::get('/contacts/{id}',[ContactController::class, 'show'])->where('id','[0-9]+');
+    Route::put('/contacts/{id}',[ContactController::class, 'update'])->where('id','[0-9]+');
 });

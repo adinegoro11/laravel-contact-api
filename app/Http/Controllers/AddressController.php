@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AddressCreateRequest;
-use App\Http\Resources\ContactResource;
+use App\Http\Resources\AddressResource;
 use App\Models\Address;
 use App\Models\Contact;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -34,9 +34,7 @@ class AddressController extends Controller
      */
     public function store(int $idContact, AddressCreateRequest $request): JsonResponse
     {
-
         $user = Auth::user();
-
         $contact = Contact::where('id', $idContact)->where('user_id', $user->id)->first();
         if (!$contact) {
             throw new HttpResponseException(response()->json([
@@ -52,7 +50,7 @@ class AddressController extends Controller
         $address = new Address($data);
         $address->contact_id = $contact->id;
         $address->save();
-        return (new ContactResource($contact))->response()->setStatusCode(201) ;
+        return (new AddressResource($address))->response()->setStatusCode(201) ;
     }
 
     /**

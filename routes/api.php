@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AddressController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -32,4 +33,5 @@ Route::middleware('authorization')->group(function (){
     Route::get('/contacts/{id}',[ContactController::class, 'show'])->where('id','[0-9]+');
     Route::put('/contacts/{id}',[ContactController::class, 'update'])->where('id','[0-9]+');
     Route::delete('/contacts/{id}',[ContactController::class, 'destroy'])->where('id','[0-9]+');
+    Route::post('/contacts/{idContact}/addresses',[AddressController::class, 'store'])->where('idContact','[0-9]+');
 });

@@ -13,7 +13,7 @@ class AddressCreateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user != null;
+        return $this->user() != null;
     }
 
     /**
@@ -28,7 +28,7 @@ class AddressCreateRequest extends FormRequest
             'city' => ['nullable','max:200','min:3'],
             'province' => ['nullable','max:200','min:3'],
             'country' => ['required','max:100','min:3'],
-            'postal_code' => ['nullable','max:10','min:6'],
+            'postal_code' => ['nullable','max:10','min:5'],
         ];
     }
     protected function failedValidation(Validator $validator)

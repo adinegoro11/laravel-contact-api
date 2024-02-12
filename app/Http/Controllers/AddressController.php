@@ -56,9 +56,33 @@ class AddressController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(int $idContact, int $idAddress): AddressResource
     {
-        //
+        $user = Auth::user();
+
+        $contact = Contact::where('id', $idContact)->where('user_id', $user->id)->first();
+        if (!$contact) {
+            throw new HttpResponseException(response()->json([
+                'errors' => [
+                    'message' => [
+                        'not found'
+                    ]
+                ]
+            ])->setStatusCode(404));
+        }
+
+        $address = Address::where('contact_id', $contact->id)->where('id', $idAddress)->first();
+        if (!$address) {
+            throw new HttpResponseException(response()->json([
+                'errors' => [
+                    'message' => [
+                        'not found'
+                    ]
+                ]
+            ])->setStatusCode(404));
+        }
+
+        return new AddressResource($address);
     }
 
     /**

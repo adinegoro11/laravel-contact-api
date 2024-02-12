@@ -212,4 +212,32 @@ class ContactTest extends TestCase
         $response->assertJsonPath('meta.current_page',1);
         $response->assertJsonPath('meta.last_page',2);
     }
+
+    public function test_search_not_found(): void
+    {
+        $this->seed([UserSeeder::class, SearchSeeder::class]);
+        $response = $this->withHeaders([
+            'Authorization' => 'test-token',
+            'Accept' => 'application/json'
+        ])->get('/api/contacts?name=aaaaaaa', []);
+
+        $response->assertStatus(200);
+        $response->assertJsonPath('meta.total',0);
+        $response->assertJsonPath('meta.current_page',1);
+        $response->assertJsonPath('meta.last_page',1);
+    }
+
+    public function test_search_with_page(): void
+    {
+        $this->seed([UserSeeder::class, SearchSeeder::class]);
+        $response = $this->withHeaders([
+            'Authorization' => 'test-token',
+            'Accept' => 'application/json'
+        ])->get('/api/contacts?name=first_name&size=5&page=2', []);
+
+        $response->assertStatus(200);
+        $response->assertJsonPath('meta.total',20);
+        $response->assertJsonPath('meta.current_page',2);
+        $response->assertJsonPath('meta.last_page',4);
+    }
 }

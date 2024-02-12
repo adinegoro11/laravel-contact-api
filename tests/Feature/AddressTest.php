@@ -157,9 +157,55 @@ class AddressTest extends TestCase
 
     public function test_update_failed(): void
     {
+        $this->seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
+        $address = Address::query()->limit(1)->first();
+
+        $params = [
+            'street' => 'Damansara',
+            'city' => 'Petaling Jaya',
+            'province' => 'Kuala Lumpur',
+            'country' => '',
+            'postal_code' => 12345,
+        ];
+
+        $response = $this->withHeaders([
+            'Authorization' => 'test-token',
+            'Accept' => 'application/json'
+        ])->put('/api/contacts/' . $address->contact_id . '/addresses/' . ($address->id), $params);
+        $response->assertStatus(400);
+        $response->assertJson([
+            'errors' => [
+                'country' => [
+                    'The country field is required.'
+                ]
+            ]
+        ]);
     }
 
     public function test_update_not_found(): void
     {
+        $this->seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
+        $address = Address::query()->limit(1)->first();
+
+        $params = [
+            'street' => 'Damansara',
+            'city' => 'Petaling Jaya',
+            'province' => 'Kuala Lumpur',
+            'country' => 'Malaysia',
+            'postal_code' => 12345,
+        ];
+
+        $response = $this->withHeaders([
+            'Authorization' => 'test-token',
+            'Accept' => 'application/json'
+        ])->put('/api/contacts/' . $address->contact_id . '/addresses/' . ($address->id +3), $params);
+        $response->assertStatus(404);
+        $response->assertJson([
+            'errors' => [
+                'message' => [
+                    'not found'
+                ]
+            ]
+        ]);
     }
 }

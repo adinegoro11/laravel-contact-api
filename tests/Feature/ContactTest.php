@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Contact;
 use Database\Seeders\ContactSeeder;
+use Database\Seeders\SearchSeeder;
 use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -196,5 +197,19 @@ class ContactTest extends TestCase
                 ]
             ]
         ]);
+    }
+
+    public function test_search_by_first_name(): void
+    {
+        $this->seed([UserSeeder::class, SearchSeeder::class]);
+        $response = $this->withHeaders([
+            'Authorization' => 'test-token',
+            'Accept' => 'application/json'
+        ])->get('/api/contacts?name=first_name', []);
+
+        $response->assertStatus(200);
+        $response->assertJsonPath('meta.total',20);
+        $response->assertJsonPath('meta.current_page',1);
+        $response->assertJsonPath('meta.last_page',2);
     }
 }

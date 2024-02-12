@@ -45,7 +45,7 @@ class UserController extends Controller
             ], 401));
         }
 
-        $user->token = Str::uuid()->toString();
+        // $user->token = Str::uuid()->toString();
         $user->save();
         return new UserResource($user);
     }

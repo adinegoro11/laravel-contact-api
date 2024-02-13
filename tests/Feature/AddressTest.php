@@ -242,4 +242,16 @@ class AddressTest extends TestCase
             ]
         ]);
     }
+
+    public function test_list_success(): void
+    {
+        $this->seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
+        $contact = Contact::query()->limit(1)->first();
+
+        $response = $this->withHeaders([
+            'Authorization' => 'test-token',
+            'Accept' => 'application/json'
+        ])->get('/api/contacts/' . $contact->contact_id . '/addresses');
+        $response->assertStatus(200);
+    }
 }

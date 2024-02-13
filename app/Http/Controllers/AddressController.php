@@ -18,9 +18,12 @@ class AddressController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(int $idContact): JsonResponse
     {
-        //
+        $user = Auth::user();
+        $contact = $this->getContact($user, $idContact);
+        $addresses = Address::where('contact_id', $contact->id)->get();
+        return (AddressResource::collection($addresses))->response()->setStatusCode(200);
     }
 
     private function getContact(User $user, int $idContact): Contact

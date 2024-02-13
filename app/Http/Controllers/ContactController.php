@@ -61,7 +61,6 @@ class ContactController extends Controller
     public function show(int $id): ContactResource
     {
         $user = Auth::user();
-
         $contact = Contact::where('id', $id)->where('user_id', $user->id)->first();
         if (!$contact) {
             throw new HttpResponseException(response()->json([

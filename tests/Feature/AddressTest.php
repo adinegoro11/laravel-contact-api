@@ -232,7 +232,7 @@ class AddressTest extends TestCase
         $response = $this->withHeaders([
             'Authorization' => 'test-token',
             'Accept' => 'application/json'
-        ])->delete('/api/contacts/' . $address->contact_id . '/addresses/' . ($address->id +2));
+        ])->delete('/api/contacts/' . $address->contact_id . '/addresses/' . ($address->id + 2));
         $response->assertStatus(404);
         $response->assertJson([
             'errors' => [
@@ -247,11 +247,33 @@ class AddressTest extends TestCase
     {
         $this->seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
         $contact = Contact::query()->limit(1)->first();
-
         $response = $this->withHeaders([
             'Authorization' => 'test-token',
             'Accept' => 'application/json'
-        ])->get('/api/contacts/' . $contact->contact_id . '/addresses');
+        ])->get('/api/contacts/' . $contact->id . '/addresses');
         $response->assertStatus(200);
+        $response->assertJsonPath('data.0.street', fn (string $street) => ($street) == 'Jalan Pramuka');
+        $response->assertJsonPath('data.0.city', fn (string $city) => ($city) == 'Bogor');
+        $response->assertJsonPath('data.0.province', fn (string $province) => ($province) == 'Jawa Barat');
+        $response->assertJsonPath('data.0.country', fn (string $country) => ($country) == 'Indonesia');
+        $response->assertJsonPath('data.0.postal_code', fn (string $postal_code) => ($postal_code) == 16619);
+    }
+
+    public function test_list_contact_not_found(): void
+    {
+        $this->seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
+        $contact = Contact::query()->limit(1)->first();
+        $response = $this->withHeaders([
+            'Authorization' => 'test-token',
+            'Accept' => 'application/json'
+        ])->get('/api/contacts/' . ($contact->id + 2)  . '/addresses');
+        $response->assertStatus(404);
+        $response->assertJson([
+            'errors' => [
+                'message' => [
+                    'not found'
+                ]
+            ]
+        ]);
     }
 }
